@@ -16,6 +16,10 @@ spl_autoload_register(function ($class) {
 $app = new App\Core\Application();
 $container = $app->getContainer();
 
+$container['errorHandler'] = function () {
+    die(404);
+};
+
 $container['config'] = function () {
     return [
         'db_driver'   => 'mysql',
@@ -35,3 +39,17 @@ $container->db = function ($container) {
         $config['db_password']
     );
 };
+
+$app->get('/', function () {
+    echo 'Home';
+});
+
+$app->post('/register', function () {
+    echo 'Register';
+});
+
+$app->map('/users', function () {
+    echo 'Users';
+}, ['GET', 'POST']);
+
+$app->run();

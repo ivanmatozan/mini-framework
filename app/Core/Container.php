@@ -20,6 +20,17 @@ class Container implements \ArrayAccess
     protected $cache = [];
 
     /**
+     * Container constructor.
+     * @param array $items
+     */
+    public function __construct(array $items = [])
+    {
+        foreach ($items as $key => $item) {
+            $this->offsetSet($key, $item);
+        }
+    }
+
+    /**
      * @inheritDoc
      */
     public function offsetExists($offset)
