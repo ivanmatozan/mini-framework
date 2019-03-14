@@ -5,17 +5,17 @@ namespace App\Controllers;
 use App\Core\Response;
 
 /**
- * Class Home
+ * Class User
  * @package App\Controllers
  */
-class Home
+class User
 {
     /**
      * @param Response $response
-     * @return Response
+     * @return mixed
      */
-    public function index(Response $response): Response
+    public function json(Response $response)
     {
-        return $response->setBody('Index');
+        return $response->withJson('test');
     }
 }

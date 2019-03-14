@@ -21,6 +21,9 @@ class Application
         $this->container = new Container([
             'router' => function () {
                 return new Router();
+            },
+            'response' => function () {
+                return new Response();
             }
         ]);
     }
@@ -39,6 +42,14 @@ class Application
     public function getRouter(): Router
     {
         return $this->getContainer()->router;
+    }
+
+    /**
+     * @return Response
+     */
+    public function getResponse(): Response
+    {
+        return $this->getContainer()->response;
     }
 
     /**
@@ -70,9 +81,9 @@ class Application
     }
 
     /**
-     * @return mixed
+     * @return void
      */
-    public function run()
+    public function run(): void
     {
         $router = $this->getRouter();
         $router->setPath($_SERVER['PATH_INFO'] ?? '/');
@@ -89,7 +100,7 @@ class Application
             return;
         }
 
-        return $this->process($response);
+        $this->respond($this->process($response));
     }
 
     /**
@@ -98,13 +109,29 @@ class Application
      */
     protected function process($callable)
     {
-        if (is_array($callable)) {
-            if (!is_object($callable[0])) {
-                $callable[0] = new $callable[0];
-            }
-            return call_user_func($callable);
+        if (is_array($callable) && !is_object($callable[0])) {
+            $callable[0] = new $callable[0];
         }
 
-        return $callable();
+        return $callable($this->getResponse());
+    }
+
+    /**
+     * @param Response|string $response
+     */
+    protected function respond($response): void
+    {
+        if (!$response instanceof Response) {
+            echo $response;
+            return;
+        }
+
+        http_response_code($response->getStatusCode());
+
+        foreach ($response->getHeaders() as $name => $value) {
+            header(sprintf('%s: %s', $name, $value));
+        }
+
+        echo $response->getBody();
     }
 }

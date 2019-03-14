@@ -17,7 +17,9 @@ $app = new App\Core\Application();
 $container = $app->getContainer();
 
 $container['errorHandler'] = function () {
-    die(404);
+    return function (\App\Core\Response $response) {
+        return $response->setBody('Page not found')->withStatusCode(404);
+    };
 };
 
 $container['config'] = function () {
@@ -42,12 +44,14 @@ $container->db = function ($container) {
 
 $app->get('/', [\App\Controllers\Home::class, 'index']);
 
-$app->post('/register', function () {
-    echo 'Register';
+$app->map('/users', [\App\Controllers\User::class, 'json'], ['GET', 'POST']);
+
+$app->get('/home', function (\App\Core\Response $response) {
+    return 'Home';
 });
 
-$app->map('/users', function () {
-    echo 'Users';
-}, ['GET', 'POST']);
+$app->post('/register', function () {
+    return 'Register';
+});
 
 $app->run();
