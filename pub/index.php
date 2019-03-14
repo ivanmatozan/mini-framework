@@ -9,6 +9,29 @@ spl_autoload_register(function ($class) {
     $filename = BP . DS . str_replace('\\', DS, $class) . '.php';
 
     if (file_exists($filename)) {
-        require_once $filename;
+        require $filename;
     }
 });
+
+$app = new App\Core\Application();
+$container = $app->getContainer();
+
+$container['config'] = function () {
+    return [
+        'db_driver'   => 'mysql',
+        'db_host'     => 'localhost',
+        'db_name'     => 'project',
+        'db_username' => 'root',
+        'db_password' => 'root'
+    ];
+};
+
+$container->db = function ($container) {
+    $config = $container->config;
+
+    return new \PDO(
+        "{$config['db_driver']}:host={$config['db_host']};dbname={$config['db_name']}",
+        $config['db_username'],
+        $config['db_password']
+    );
+};
