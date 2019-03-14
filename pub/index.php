@@ -26,7 +26,7 @@ $container['config'] = function () {
     return [
         'db_driver'   => 'mysql',
         'db_host'     => 'localhost',
-        'db_name'     => 'project',
+        'db_name'     => 'sakila',
         'db_username' => 'root',
         'db_password' => 'root'
     ];
@@ -42,16 +42,6 @@ $container->db = function ($container) {
     );
 };
 
-$app->get('/', [\App\Controllers\Home::class, 'index']);
-
-$app->map('/users', [\App\Controllers\User::class, 'json'], ['GET', 'POST']);
-
-$app->get('/home', function (\App\Core\Response $response) {
-    return 'Home';
-});
-
-$app->post('/register', function () {
-    return 'Register';
-});
+require BP . '/app/routes.php';
 
 $app->run();

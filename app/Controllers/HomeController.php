@@ -5,10 +5,10 @@ namespace App\Controllers;
 use App\Core\Response;
 
 /**
- * Class Home
+ * Class HomeController
  * @package App\Controllers
  */
-class Home
+class HomeController
 {
     /**
      * @param Response $response
