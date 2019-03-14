@@ -40,9 +40,7 @@ $container->db = function ($container) {
     );
 };
 
-$app->get('/', function () {
-    echo 'Home';
-});
+$app->get('/', [\App\Controllers\Home::class, 'index']);
 
 $app->post('/register', function () {
     echo 'Register';

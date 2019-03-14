@@ -45,7 +45,7 @@ class Application
      * @param string $uri
      * @param callable $handler
      */
-    public function get(string $uri, callable $handler): void
+    public function get(string $uri, $handler): void
     {
         $this->getRouter()->addRoute($uri, $handler);
     }
@@ -54,7 +54,7 @@ class Application
      * @param string $uri
      * @param callable $handler
      */
-    public function post(string $uri, callable $handler): void
+    public function post(string $uri, $handler): void
     {
         $this->getRouter()->addRoute($uri, $handler, ['POST']);
     }
@@ -62,14 +62,17 @@ class Application
     /**
      * @param string $uri
      * @param callable $handler
-     * @param array $mehods
+     * @param array $methods
      */
-    public function map(string $uri, callable $handler, array $mehods): void
+    public function map(string $uri, $handler, array $methods): void
     {
-        $this->getRouter()->addRoute($uri, $handler, $mehods);
+        $this->getRouter()->addRoute($uri, $handler, $methods);
     }
 
-    public function run(): void
+    /**
+     * @return mixed
+     */
+    public function run()
     {
         $router = $this->getRouter();
         $router->setPath($_SERVER['PATH_INFO'] ?? '/');
@@ -86,6 +89,22 @@ class Application
             return;
         }
 
-        $response();
+        return $this->process($response);
+    }
+
+    /**
+     * @param callable|array $callable
+     * @return mixed
+     */
+    protected function process($callable)
+    {
+        if (is_array($callable)) {
+            if (!is_object($callable[0])) {
+                $callable[0] = new $callable[0];
+            }
+            return call_user_func($callable);
+        }
+
+        return $callable();
     }
 }

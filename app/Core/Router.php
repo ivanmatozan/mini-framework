@@ -39,18 +39,18 @@ class Router
      * @param callable $handler
      * @param array $methods
      */
-    public function addRoute(string $uri, callable $handler, array $methods = ['GET']): void
+    public function addRoute(string $uri, $handler, array $methods = ['GET']): void
     {
         $this->routes[$uri] = $handler;
         $this->methods[$uri] = $methods;
     }
 
     /**
-     * @return callable
+     * @return callable|array
      * @throws MethodNotAllowedException
      * @throws RouteNotFoundException
      */
-    public function getResponse(): callable
+    public function getResponse()
     {
         if (!isset($this->routes[$this->path])) {
             throw new RouteNotFoundException("No route registered for: {$this->path}");
